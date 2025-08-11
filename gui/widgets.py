@@ -15,9 +15,9 @@ class Segment(ttk.Frame):
         label.grid(row=row, column=col, sticky='ew', padx=5, pady=5)
         return label
 
-    def btn_widgets(self, button_text, comnd, row=0, col=1):
+    def btn_widgets(self, button_text, comnd, st=None,row=0, col=1):
         """Create and place a button widget."""
-        btn = ttk.Button(self, text=button_text, command=comnd)
+        btn = ttk.Button(self, text=button_text, command=comnd, state=st)
         btn.grid(row=row, column=col, sticky='nsew', padx=5, pady=5)
         return btn
 
