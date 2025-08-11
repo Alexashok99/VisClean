@@ -1,21 +1,15 @@
 
 
-import tkinter as tk
-import ttkbootstrap as ttk
+#Local Imports
+from gui.main_gui import MainApp
 
-#Locals Imports
-from setting.settings import*
-
-
-class MainApp(ttk.Window):
+class MainAppRunner:
     def __init__(self):
-        super().__init__(THEME)
-        self.title(TITLE)
-        self.geometry(f"{WSIZE[0]}x{WSIZE[1]}+{POS[0]}+{POS[1]}")
-        self.iconbitmap(ICON)
-        self.minsize(WSIZE[0], WSIZE[1])
+        self.app = MainApp()
+
+    def gui_run(self):
+        self.app.mainloop()
 
 
 if __name__ == "__main__":
-    app = MainApp()
-    app.mainloop()
+    MainAppRunner().gui_run()
