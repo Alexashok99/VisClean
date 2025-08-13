@@ -15,6 +15,7 @@ from .widgets import Segment
 from .tab_frame import TabFrame
 from .rt_frame import RightFrame
 from .botm_br import BottomBar
+from .connector import ConnectorFunc
 #from setting Folder
 from setting.settings import *
 #From src Folder
@@ -26,7 +27,7 @@ def choose_folder():
 
 class MainApp(ttk.Window):
     def __init__(self):
-        super().__init__(THEME)
+        super().__init__(THEME1)
         self.title(TITLE)
         self.geometry(f"{WSIZE[0]}x{WSIZE[1]}+{POS[0]}+{POS[1]}")
         self.iconbitmap(ICON)
@@ -49,6 +50,8 @@ class MainApp(ttk.Window):
         # Initialize scanner and file saving logic
         self.scanner = Scanner()
         self.log_saving = FileSaving()
+
+        self.masseage = ConnectorFunc()
 
     def create_sidebar(self):
         # Sidebar frame (20% width, full height)
@@ -103,13 +106,14 @@ class MainApp(ttk.Window):
         mm_uper.grid(row=0, column=0, columnspan=2, sticky="nsew")
 
         # Placeholder for main area content
-        ttk.Label(mm_uper, 
+        self.show_text = ttk.Label(mm_uper, 
                   text="Show Text Here", 
                   anchor="center", 
                   justify="center",
-                  font=FONT_SIZE["Heading"], 
-                  foreground="black",
-                  background="grey").pack(side="left",expand=True, fill="both")
+                  font=FONT_SIZE["Log"], 
+                  bootstyle="success",
+                )
+        self.show_text.pack(side="left",expand=True, fill="both")
         
         wg_segment = Segment(mm_uper)
         wg_segment.pack(expand=True, fill="x", padx=5, pady=5)
@@ -136,6 +140,8 @@ class MainApp(ttk.Window):
         rt_frm.pack(expand=True, fill="both")
         rt_frm.create_widgets()
         rt_frm.progress_bar()
+        rt_frm.tool_tip(self.btn_scan, "This button starts the scanning process.", bt='success-inverse')
+        rt_frm.tool_tip(self.choose_file, "This button starts the scanning process.", bt='danger-inverse')
         
 
 
@@ -148,8 +154,11 @@ class MainApp(ttk.Window):
         bottom_bar.pack(side="bottom", fill="both")
 
     def select_folder(self):
+        self.masseage.show_toast("Warning", "Please Choose a Folder", bt="warning")  # Test toast notification
         folder = choose_folder()
         if folder:
+            self.show_text.config(text=f"Selected Folder: {folder}")
+            self.masseage.show_toast("Folder Selected", f"You have selected: {folder}", bt="success")
             # Reset old scan data
             self.scanner.reset()
             self.tab_frame.txt_area.delete(1.0, tk.END)
@@ -167,6 +176,10 @@ class MainApp(ttk.Window):
 
 
     def run_scanning(self):
+        if not hasattr(self, 'source') or not self.source:
+            messagebox.showwarning("Warning", "Please select a folder first.")
+            return
+        self.masseage.show_toast("Scanning", "Scanning started...", bt="info")
         self.scanner.reset()
         self.tab_frame.txt_area.delete(1.0, tk.END)
         self.tab_frame.txt_area.insert(tk.END, "🔍 Scanning started...\n")
@@ -188,6 +201,9 @@ class MainApp(ttk.Window):
         self.tab_frame.txt_area.insert(tk.END, f"✅ Scan completed in {time_taken:.2f} seconds.\n")
         self.tab_frame.txt_area.insert(tk.END, "------------------Scan End------------------------\n")
 
+        self.fps = round((num / time_taken if time_taken > 0 else 0))
+        self.tab_frame.txt_area.insert(tk.END, f"📊 Scanned {self.fps}")
+
         # Internal Scanning
         self.scanner.scan(self.source, self.tab_frame.txt_area)
 
@@ -199,6 +215,9 @@ class MainApp(ttk.Window):
         self.tab_frame.txt_area.insert(tk.END, "💾 You can now save the logs as CSV or PKL and Files Info in Text file.\n")
         self.tab_frame.txt_area.see(tk.END)
 
+        self.show_text.config(text=f"Scanned {self.fps} files per second.")
+        # Enable buttons after scanning
+        self.btn_scan.config(state="disabled")
         self.view_btn.config(state="normal")
         self.sav_res.config(state="normal")
         self.sav_log.config(state="normal")

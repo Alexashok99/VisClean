@@ -9,9 +9,9 @@ class RightFrame(ttk.Frame):
         self.pack(fill='both', expand=True)
         
 
-    def tool_tip(self, widget, text):
+    def tool_tip(self, widget, text, bt=None):
         """Add a tooltip to a widget."""
-        tooltip = ToolTip(widget, text=text, bootstyle='danger-inverse')
+        tooltip = ToolTip(widget, text=text, bootstyle=bt if bt else 'danger-inverse')
         return tooltip
     
     def show_toast(self):

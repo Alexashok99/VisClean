@@ -1,7 +1,7 @@
 
 
-
-THEME = "pulse"
+THEME1 = "darkly"  # Default theme for the application
+THEME2 = "pulse"
 TITLE = "FILE MANAGER"
 WSIZE = [900, 550]
 POS = [100, 50]  # Position of the window
