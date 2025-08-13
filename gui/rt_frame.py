@@ -30,7 +30,7 @@ class RightFrame(ttk.Frame):
         """Create widgets for the right frame."""
         label = ttk.Label(self, text="Right Side", 
                           font=("Arial", 12), 
-                          bootstyle="inverse-purple",
+                          bootstyle="info-inverse",
                           anchor="center",justify="center"
                           )
         label.pack(expand=True, fill="both", pady=10)

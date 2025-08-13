@@ -14,7 +14,7 @@ class FileSaving:
 
     def csv_logs_save(self, csv_data):
         csv_file = csv_data
-        heading = ['Name', 'Size', 'File type', 'Last modified']
+        heading = ['Name', 'File type', 'Size', 'Last modified']
         with open(self.csv_data_path, 'w', newline='', encoding="utf-8") as f:
             writ = csv.writer(f)
             writ.writerow(heading)
@@ -24,7 +24,7 @@ class FileSaving:
                 modified_time = os.path.getmtime(scanning_path)
                 modified_date = datetime.datetime.fromtimestamp(modified_time).strftime("%d-%m-%Y %I:%M %p") 
                 size = f"{round((scanning_path.stat().st_size) / (1024 * 1024), 3)} MB"
-                data = [file_name, size, file_ext, modified_date]
+                data = [file_name, file_ext, size, modified_date]
                 writ.writerow(data)
         # print(f"📄 Report saved to {self.csv_data_path}")
 
@@ -47,6 +47,7 @@ class FileSaving:
                 count = data['count']
                 size = data['size']
                 f.write(f"{ftype} | {count} | {size} MB\n")
+
         # for ftype, data in file_path:
         #     count = data['count']
         #     size = data['size']

@@ -1,9 +1,0 @@
-File Information Report
-Generated on: 11-08-2025 11:28 PM
---------------------------------------------------
-Name | Total Number | Total Size
---------------------------------------------------
-IMG | 30 | 0.775 MB
-PNG | 3 | 0.088 MB
-MP3 | 1 | 0.462 MB
-OTHER | 12 | 37.323 MB

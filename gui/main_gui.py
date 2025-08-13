@@ -2,6 +2,7 @@
 import time
 import os
 from pathlib import Path
+import csv
 import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
@@ -16,6 +17,7 @@ from .tab_frame import TabFrame
 from .rt_frame import RightFrame
 from .botm_br import BottomBar
 from .connector import ConnectorFunc
+from .upper_frame import UpperFrame
 #from setting Folder
 from setting.settings import *
 #From src Folder
@@ -77,75 +79,82 @@ class MainApp(ttk.Window):
         # Buttons - compact size
         self.choose_file = self.widgets_seg.btn_widgets("Choose Folder", comnd=self.select_folder, row=0, col=0)
         self.btn_scan = self.widgets_seg.btn_widgets("Scan Files", comnd=self.run_scanning, st="disabled", row=1, col=0)
-        self.view_btn = self.widgets_seg.btn_widgets("View Result", lambda: print("Scan Button Clicked"), st="disabled", row=2, col=0)
+        self.view_btn = self.widgets_seg.btn_widgets("View Result", comnd= self.goto_tab2, st="normal", row=2, col=0)
         self.sav_res = self.widgets_seg.btn_widgets("Save Result", comnd= self.save_file_infotxt, st="disabled", row=3, col=0)
         self.sav_log = self.widgets_seg.btn_widgets("Save Logs", comnd= self.save_pkl_logs,st="disabled", row=4, col=0)
         self.sv_csv = self.widgets_seg.btn_widgets("Save to CSV", comnd=self.run_save_csv, st="disabled", row=5, col=0)
-        self.widgets_seg.btn_widgets("Close App", lambda: self.destroy(), row=6, col=0)
+        self.files_csv = self.widgets_seg.btn_widgets("View Files", comnd=self.goto_tab3, st="normal", row=6, col=0)
+        self.widgets_seg.btn_widgets("Close App", lambda: self.destroy(), row=7, col=0)
 
         # Entry box
-        self.widgets_seg.entry_widgets(row=7, col=0)
+        self.widgets_seg.entry_widgets(row=8, col=0)
 
         # Status text
-        self.widgets_seg.text_widgets("Status: Ready", bg="lightgray", row=8, col=0)
+        self.widgets_seg.text_widgets("Status: Ready", bg="lightgray", row=9, col=0)
 
 
 
     def create_main_area(self):
-        main_area = ttk.Frame(self)
-        main_area.grid(row=0, column=1, sticky="nsew")
+        self.main_area = ttk.Frame(self)
+        self.main_area.grid(row=0, column=1, sticky="nsew")
 
         # Configure main area layout
-        main_area.grid_columnconfigure(0, weight=4)
-        main_area.grid_columnconfigure(1, weight=1)
-        main_area.grid_rowconfigure(0, weight=1)
-        main_area.grid_rowconfigure(1, weight=9)
+        self.main_area.grid_columnconfigure(0, weight=4)
+        self.main_area.grid_columnconfigure(1, weight=1)
+        self.main_area.grid_rowconfigure(0, weight=1)
+        self.main_area.grid_rowconfigure(1, weight=9)
 
+        self.upper_main_area()  # Create upper part of main area
+        self.create_tab_frame()  # Create tab frame in lower part of main area
+        self.create_right_frame()  # Create right frame with additional widgets
+
+    #----------------------------------Upper Frame GUI----------------------------------#
+    def upper_main_area(self):
+        """Create the upper part of the main area with segments and widgets."""
         # Create segments in the main area
-        mm_uper = ttk.Frame(main_area)
+        mm_uper = ttk.Frame(self.main_area)
         mm_uper.grid(row=0, column=0, columnspan=2, sticky="nsew")
 
-        # Placeholder for main area content
-        self.show_text = ttk.Label(mm_uper, 
-                  text="Show Text Here", 
-                  anchor="center", 
-                  justify="center",
-                  font=FONT_SIZE["Log"], 
-                  bootstyle="success",
-                )
-        self.show_text.pack(side="left",expand=True, fill="both")
-        
-        wg_segment = Segment(mm_uper)
-        wg_segment.pack(expand=True, fill="x", padx=5, pady=5)
-        wg_segment.entry_widgets(row=0, col=1)
+        self.upper_frm = UpperFrame(mm_uper)
+        self.upper_frm.pack(expand=True, fill="both")
 
-        wg_segment.btn_widgets("Search", lambda: print("Search Button"), row=0, col=2)
+        self.upper_frm.create_widgets() 
+        self.upper_frm.update_status("Welcome to the File Scanner App!")
         
+ 
+    #----------------------------------Tab Frame GUI----------------------------------#
+    def create_tab_frame(self):
+        """Create the tab frame with Scanning, Results, and File Info tabs."""    
         # Create lower main area segment
-        mm_lower = ttk.Frame(main_area)
+        mm_lower = ttk.Frame(self.main_area)
         mm_lower.grid(row=1, column=0, sticky="nsew")
 
         self.tab_frame = TabFrame(mm_lower)
         self.tab_frame.pack(expand=True, fill="both")
 
-        aa = "Hello, this is a placeholder for the main content area. You can add your widgets here."
-        for i in range(51):
-            self.tab_frame.txt_area.insert(tk.END, f"{aa}\n")
-            self.tab_frame.txt_area.see("end-1c")  # Scroll to the end
+        # aa = "Hello, this is a placeholder for the main content area. You can add your widgets here."
+        # for i in range(51):
+        #     self.tab_frame.txt_area.insert(tk.END, f"{aa}\n")
+        #     self.tab_frame.txt_area.see("end-1c")  # Scroll to the end
 
-        mm_rside = ttk.Frame(main_area)
+    #----------------------------------Right Frame GUI----------------------------------#
+    def create_right_frame(self):
+        """Create the right frame with additional widgets."""
+        # Create right side frame for additional widgets
+        mm_rside = ttk.Frame(self.main_area)
         mm_rside.grid(row=1, column=1, sticky="nsew")
         # Placeholder for right side content
-        rt_frm = RightFrame(mm_rside)
-        rt_frm.pack(expand=True, fill="both")
-        rt_frm.create_widgets()
-        rt_frm.progress_bar()
-        rt_frm.tool_tip(self.btn_scan, "This button starts the scanning process.", bt='success-inverse')
-        rt_frm.tool_tip(self.choose_file, "This button starts the scanning process.", bt='danger-inverse')
+        self.rt_frm = RightFrame(mm_rside)
+        self.rt_frm.pack(expand=True, fill="both")
+        self.rt_frm.create_widgets()
+        self.rt_frm.progress_bar()
+        self.rt_frm.tool_tip(self.btn_scan, "This button starts the scanning process.", bt='success-inverse')
+        self.rt_frm.tool_tip(self.choose_file, "This button starts the scanning process.", bt='danger-inverse')
         
 
 
-
+    #----------------------------------Bottom Bar GUI----------------------------------#
+    # Create a bottom bar with status and progress bar
     def bottom_bar(self):
         bottom_bar = ttk.Frame(self)
         bottom_bar.grid(row=1, column=0, columnspan=2, sticky="ewns")
@@ -153,11 +162,14 @@ class MainApp(ttk.Window):
         bottom_bar = BottomBar(bottom_bar)
         bottom_bar.pack(side="bottom", fill="both")
 
+#----------------------------------End of MainApp Class GUI----------------------------------#
+
     def select_folder(self):
         self.masseage.show_toast("Warning", "Please Choose a Folder", bt="warning")  # Test toast notification
         folder = choose_folder()
         if folder:
-            self.show_text.config(text=f"Selected Folder: {folder}")
+            self.upper_frm.show_text.delete(1.0, tk.END)  # Clear previous text
+            self.upper_frm.update_status(f"Selected Folder: {folder}")
             self.masseage.show_toast("Folder Selected", f"You have selected: {folder}", bt="success")
             # Reset old scan data
             self.scanner.reset()
@@ -169,16 +181,18 @@ class MainApp(ttk.Window):
         else:
             messagebox.showwarning("Warning", "No folder selected.")
 
-        self.view_btn.config(state="disabled")
+        # self.view_btn.config(state="disabled")
         self.sav_res.config(state="disabled")
         self.sav_log.config(state="disabled")
         self.sv_csv.config(state="disabled")
+        # self.files_csv.config(state="disabled")
 
 
     def run_scanning(self):
         if not hasattr(self, 'source') or not self.source:
             messagebox.showwarning("Warning", "Please select a folder first.")
             return
+        self.tab_frame.notebook.select(self.tab_frame.Scanning)
         self.masseage.show_toast("Scanning", "Scanning started...", bt="info")
         self.scanner.reset()
         self.tab_frame.txt_area.delete(1.0, tk.END)
@@ -215,13 +229,14 @@ class MainApp(ttk.Window):
         self.tab_frame.txt_area.insert(tk.END, "💾 You can now save the logs as CSV or PKL and Files Info in Text file.\n")
         self.tab_frame.txt_area.see(tk.END)
 
-        self.show_text.config(text=f"Scanned {self.fps} files per second.")
+        self.upper_frm.update_status(f"Scanned {self.fps} files per second.")
         # Enable buttons after scanning
         self.btn_scan.config(state="disabled")
-        self.view_btn.config(state="normal")
+        self.view_btn.config(state="disabled")
         self.sav_res.config(state="normal")
         self.sav_log.config(state="normal")
         self.sv_csv.config(state="normal")
+        self.files_csv.config(state="disabled")
 
     
     def run_save_csv(self):
@@ -230,6 +245,7 @@ class MainApp(ttk.Window):
         self.log_saving.csv_logs_save(self.scanner.get_file_paths())
         self.tab_frame.txt_area.insert(tk.END, "✅ CSV logs saved successfully.\n")
         self.sv_csv.config(state="disabled")
+        self.files_csv.config(state="normal")
         
     def save_pkl_logs(self):
         self.tab_frame.txt_area.insert(tk.END, "💾 Saving logs as PKL...\n")
@@ -244,3 +260,30 @@ class MainApp(ttk.Window):
         self.log_saving.save_file_info(self.scanner.get_file_stats().items())
         self.tab_frame.txt_area.insert(tk.END, "✅ File info saved successfully in Text file.\n")
         self.sav_res.config(state="disabled")
+        self.view_btn.config(state="normal")
+
+    def goto_tab2(self):
+        """Switch to the Results tab."""
+        self.tab_frame.results_text.delete(1.0, tk.END)
+        # for ftype, data in self.scanner.get_file_stats().items():
+        #     self.tab_frame.results_text.insert(tk.END, f"{ftype}: {data['count']} files, {data['size']} MB \n")
+        self.tab_frame.notebook.select(self.tab_frame.Results)
+        if os.path.exists(self.log_saving.text_info_path):
+            with open(self.log_saving.text_info_path, 'r', encoding='utf-8') as f:
+                self.tab_frame.results_text.insert(tk.END, f.read() + "\n")
+        else:
+            self.tab_frame.results_text.insert(tk.END, "No file info available.\n")
+
+
+    def goto_tab3(self):
+        """Switch to the File Info tab."""
+        self.tab_frame.notebook.select(self.tab_frame.view_info)
+        self.tab_frame.tree.delete(*self.tab_frame.tree.get_children())
+        if os.path.exists(self.log_saving.csv_data_path):
+            with open(self.log_saving.csv_data_path, 'r', encoding='utf-8') as f:
+                reader = csv.reader(f)
+                next(reader)
+                for row in reader:
+                    self.tab_frame.tree.insert("", "end", values=row)
+        else:
+            self.tab_frame.tree.insert("", "end", values=("No data available", "", "", ""))

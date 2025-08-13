@@ -3,7 +3,9 @@ import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from tkinter import filedialog, messagebox, scrolledtext
-
+import csv
+import os
+import datetime
 
 class TabFrame(ttk.Frame):
     def __init__(self, parent):
@@ -14,12 +16,12 @@ class TabFrame(ttk.Frame):
         # Create frames (tabs)
         self.Scanning = ttk.Frame(self.notebook)
         self.Results = ttk.Frame(self.notebook)
-        self.tab3 = ttk.Frame(self.notebook)
+        self.view_info = ttk.Frame(self.notebook)
 
         # Add tabs to Notebook
         self.notebook.add(self.Scanning, text="Scanning")
         self.notebook.add(self.Results, text="Results Summary")
-        self.notebook.add(self.tab3, text="File Info")
+        self.notebook.add(self.view_info, text="File Info")
 
         # Add content in Tab 1
         self.txt_area = scrolledtext.ScrolledText(self.Scanning, wrap=tk.WORD, 
@@ -39,33 +41,45 @@ class TabFrame(ttk.Frame):
 
         # Add content in Tab 3
         self.tree = ttk.Treeview(
-            self.tab3,
-            columns=("Name", "Size", "Type"),
+            self.view_info,
+            columns=("Name", "Type", "Size", "Last Modified"),
             show="headings",       # Hide first empty column
             bootstyle=INFO         # Bootstyle theme color
         )
 
         # Define headings
         self.tree.heading("Name", text="File Name")
-        self.tree.heading("Size", text="Size (KB)")
         self.tree.heading("Type", text="Type")
+        self.tree.heading("Size", text="Size (MB)")
+        self.tree.heading("Last Modified", text="Last Modified")
 
         # Set column widths
         self.tree.column("Name", width=200)
-        self.tree.column("Size", width=100, anchor="center")
         self.tree.column("Type", width=100, anchor="center")
+        self.tree.column("Size", width=100, anchor="center")
+        self.tree.column("Last Modified", width=150, anchor="center")
 
         # Sample data
-        data = [
-            ("report.pdf", "120", "PDF"),
-            ("image.png", "450", "Image"),
-            ("notes.txt", "12", "Text")
-        ]
-        for row in data:
-            self.tree.insert("", "end", values=row)
+        # data = [
+        #     ("report.pdf", "120", "PDF", "2023-10-01 10:00 AM"),
+        #     ("image.png", "450", "Image", "2023-10-02 11:30 AM"),
+        #     ("notes.txt", "12", "Text", "2023-10-03 09:15 AM"),
+        # ]
+        # for row in data:
+        #     self.tree.insert("", "end", values=row)
+        # # Load data from CSV file if it exists
+        # if os.path.exists("data/logs.csv"):
+        #     # self.load_csv_data()
+
+        #     with open("data/logs.csv", "r") as file:
+        #         reader = csv.reader(file)
+        #         for row in reader:
+        #             self.tree.insert("", "end", values=row)
+        # else:
+        #     self.tree.insert("", "end", values=("No data available", "", "", ""))
 
         # Add scrollbar
-        scroll_y = ttk.Scrollbar(self.tab3, orient="vertical", command=self.tree.yview, bootstyle=ROUND)
+        scroll_y = ttk.Scrollbar(self.view_info, orient="vertical", command=self.tree.yview, bootstyle=ROUND)
         self.tree.configure(yscroll=scroll_y.set)
 
         # Pack widgets
