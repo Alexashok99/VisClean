@@ -1,4 +1,5 @@
 
+# src/scanner.py
 import time
 import os 
 from pathlib import Path
@@ -13,6 +14,15 @@ class Scanner:
         self.file_stats["OTHER"] = {"count": 0, "size": 0}  # extra category
         
     def scan(self, directory, log_area=None):
+        """_summary_
+
+        Args:
+            directory (_type_ path): _description_
+            log_area (Tab1-tab_frame,, optional): Tab frame Scrolleable Text. Defaults to None.
+
+        Raises:
+            ValueError: _description_
+        """
         start_time = time.time()  # Start timer
         self.log_area = log_area
         self.directory = Path(directory)
@@ -43,8 +53,10 @@ class Scanner:
                     self.file_stats["OTHER"]["size"] += file_path.stat().st_size
         end_time = time.time()  # End timer
         total_time = end_time - start_time
+        self.fps = num / total_time if total_time > 0 else 0
         self.log_area.insert("end", f"\n✅ Scan complete! Files Found: {num}\n")
         self.log_area.insert("end", f"⏱ Time Taken: {total_time:.2f} seconds\n")
+        self.log_area.insert("end", f"⚡ Actual Speed: {self.fps:.2f} files/sec\n")
         # time.sleep(5)
 
 

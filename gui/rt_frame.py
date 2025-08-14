@@ -1,3 +1,6 @@
+
+# gui/rt_frame.py
+
 import ttkbootstrap as ttk
 from ttkbootstrap.tooltip import ToolTip
 from ttkbootstrap.widgets import DateEntry, Floodgauge, Meter
@@ -48,28 +51,38 @@ class RightFrame(ttk.Frame):
         entry.pack(pady=10)
         self.tool_tip(entry, "Enter some text here.")
 
+        """_summary_
+        Create a progress bar to show scanning progress.
+        The progress bar will be updated during the scanning process.
+        """
     def progress_bar(self):
-        """Create a progress bar."""
-        progress_int = ttk.IntVar(value=50)
-        progress = ttk.Floodgauge(
+        self.progress_int = ttk.IntVar(value=0)
+        self.progress = ttk.Floodgauge(
             self, 
             text='Progress', 
-            variable=progress_int,
+            variable=self.progress_int,
             bootstyle='danger',
-            mask='mask {}%'
+            mask='{}%'
         )
-        progress.pack(pady=10, fill='x')
-        ttk.Scale(self, from_=0, to=100, variable=progress_int).pack()
+        self.progress.pack(pady=10, fill='x')
+        ttk.Scale(self, from_=0, to=100, variable=self.progress_int).pack()
 
-        # Example meter
-        meter = ttk.Meter(
+        """_summary_
+        Create a speed meter to show scanning speed.
+        """
+        self.meter = ttk.Meter(
             self,
-            amounttotal=100,
-            amountused=10,
-            interactive=True,
-            bootstyle='info'
+            amounttotal=100,   # max value, yahan speed ka scale set karein
+            amountused=0,      # start from 0
+            interactive=False,
+            metertype="semi",  # semi-circle meter
+            textright="fps",  # text on the right side
+            subtext='Scanning Speed',
+            stripethickness=10,  # thickness of the stripes
+            bootstyle='success'  # style of the meter
         )
-        meter.pack(pady=10, fill='x')
+        self.meter.pack(pady=10, fill='x')
+
 
 if __name__ == "__main__":
     root = ttk.Window(themename='darkly')

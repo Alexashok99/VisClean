@@ -1,4 +1,6 @@
 
+# gui/main_gui.py
+
 # import time
 # import os
 # from pathlib import Path
@@ -153,10 +155,10 @@ class MainApp(ttk.Window, GUIFunction):
     #----------------------------------Bottom Bar GUI----------------------------------#
     # Create a bottom bar with status and progress bar
     def bottom_bar(self):
-        bottom_bar = ttk.Frame(self)
-        bottom_bar.grid(row=1, column=0, columnspan=2, sticky="ewns")
+        bottom_bar_frm = ttk.Frame(self)
+        bottom_bar_frm.grid(row=1, column=0, columnspan=2, sticky="ewns")
         # Configure bottom bar layout
-        bottom_bar = BottomBar(bottom_bar)
-        bottom_bar.pack(side="bottom", fill="both")
+        self.bottom_bar = BottomBar(bottom_bar_frm)
+        self.bottom_bar.pack(side="bottom", fill="both")
 
 #----------------------------------End of MainApp Class GUI----------------------------------#

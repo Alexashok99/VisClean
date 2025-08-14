@@ -1,6 +1,7 @@
 
 
 # src/log_saving.py
+
 import pickle
 import csv
 import os
@@ -14,6 +15,12 @@ class FileSaving:
    
 
     def csv_logs_save(self, csv_data):
+        """_summary_
+
+        Args:
+            csv_data (str: Path): The path to the CSV file to save the logs.
+        This method saves the scanned file information to a CSV file.
+        """
         csv_file = csv_data
         heading = ['Name', 'File type', 'Size', 'Last modified']
         with open(self.csv_data_path, 'w', newline='', encoding="utf-8") as f:
@@ -31,12 +38,24 @@ class FileSaving:
 
 
     def pkl_logs_save(self, pkl_data):
+        """_summary_
+
+        Args:
+            pkl_data (str: ): The path to the PKL file to save the logs.
+        This method saves the scanned logs in PKL format.
+        """
         pkl_log = pkl_data
         with open(self.data_path, 'wb') as pkl_file:
             pickle.dump(pkl_log, pkl_file)
         # print(f"📦 Logs saved to {self.data_path}")
 
     def save_file_info(self, file_path):
+        """_summary_
+
+        Args:
+            file_path (_type_): The file path to save the file information.
+        This method saves the file information in a text file.
+        """
         head = ['Name', 'Total Number', 'Total Size']
         with open(self.text_info_path, 'w', encoding="utf-8") as f:
             f.write("File Information Report\n")
@@ -49,11 +68,3 @@ class FileSaving:
                 size = data['size']
                 f.write(f"{ftype} | {count} | {size} MB\n")
 
-        # for ftype, data in file_path:
-        #     count = data['count']
-        #     size = data['size']
-        #     print(f"File Type: {ftype}, Count: {count}, Size: {size} MB")
-        # print(f"Saving file info for {file_path}")
-        
-# if __name__ == "__main__":
-#     file_saving = FileSaving()

@@ -1,4 +1,6 @@
 
+# gui/widgets.py
+
 import tkinter as tk
 import ttkbootstrap as ttk
 

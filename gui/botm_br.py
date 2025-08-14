@@ -1,3 +1,5 @@
+
+#gui/botm_br.py
 import ttkbootstrap as ttk
 from ttkbootstrap.widgets import Progressbar
 
@@ -13,16 +15,20 @@ class BottomBar(ttk.Frame):
 
         # Status label (left side)
         self.label = ttk.Label(self, text="Status: Ready", anchor="w", 
-                               bootstyle="inverse-secondary", 
+                               bootstyle="success", 
                                font=("Arial", 10), 
-                               foreground="black", 
-                               background="lightgray"
+                            #    foreground="black", 
+                            #    background="lightgray"
                                )
         self.label.grid(row=0, column=0, sticky="w", padx=10, pady=5)
 
         # Progress bar (right side)
-        self.progress = Progressbar(
-            self, orient="horizontal", length=200, mode="determinate", bootstyle="success-striped"
+        self.progress_botm = Progressbar(
+            self, 
+            orient="horizontal", 
+            length=200, 
+            mode="indeterminate", 
+            bootstyle="success-striped"
         )
-        self.progress.grid(row=0, column=1, sticky="e", padx=10, pady=5)
-        self.progress['value'] = 40  # Example value
+        self.progress_botm.grid(row=0, column=1, sticky="e", padx=10, pady=5)
+        self.progress_botm['value'] = 40  # Example value

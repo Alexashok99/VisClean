@@ -1,5 +1,6 @@
 
-
+# setting/constants.py
+# This file is part of the Open Source project:
 
 FILE_TYPES = {
     "PDF": ".pdf", "IMG": ".jpeg", "PNG": ".png", "DOC": ".docx", "XLS": ".xlsx",

@@ -1,4 +1,6 @@
 
+# gui/upper_frame.py
+
 import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.tooltip import ToolTip
@@ -16,6 +18,13 @@ class UpperFrame(ttk.Frame):
         self.grid_rowconfigure(0, weight=1, minsize=50)
 
     def create_widgets(self):
+        """_summary_
+        Create the widgets for the upper frame of the GUI.
+        This includes a scrolled text area for displaying messages,
+        an entry widget for search input, and a button to trigger the search action.
+        The layout is managed using grid geometry manager.
+
+        """
         # Create a label for the title
         self.show_text = scrolledtext.ScrolledText(
             self,

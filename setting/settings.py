@@ -1,4 +1,6 @@
 
+# setting/settings.py
+# This file is part of the Open Source project:
 
 THEME1 = "darkly"  # Default theme for the application
 THEME2 = "pulse"
