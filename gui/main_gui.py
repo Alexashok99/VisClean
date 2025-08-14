@@ -1,13 +1,13 @@
 
-import time
-import os
-from pathlib import Path
-import csv
-import tkinter as tk
+# import time
+# import os
+# from pathlib import Path
+# import csv
+# import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
-from ttkbootstrap import themes
-from tkinter import filedialog, messagebox, scrolledtext
+# from ttkbootstrap import themes
+# from tkinter import filedialog, messagebox, scrolledtext
 
 # From local modules
 #from gui Folder
@@ -23,13 +23,13 @@ from setting.settings import *
 #From src Folder
 from src.scanner import Scanner
 from src.log_saving import FileSaving
+from src.gui_function import GUIFunction
 
-def choose_folder():
-    return filedialog.askdirectory()
 
-class MainApp(ttk.Window):
+
+class MainApp(ttk.Window, GUIFunction):
     def __init__(self):
-        super().__init__(THEME1)
+        super().__init__(themename=THEME1)
         self.title(TITLE)
         self.geometry(f"{WSIZE[0]}x{WSIZE[1]}+{POS[0]}+{POS[1]}")
         self.iconbitmap(ICON)
@@ -93,7 +93,8 @@ class MainApp(ttk.Window):
         self.widgets_seg.text_widgets("Status: Ready", bg="lightgray", row=9, col=0)
 
 
-
+    #----------------------------------Main Area GUI----------------------------------#
+    # Create the main area with upper frame, tab frame, and right frame
     def create_main_area(self):
         self.main_area = ttk.Frame(self)
         self.main_area.grid(row=0, column=1, sticky="nsew")
@@ -132,10 +133,6 @@ class MainApp(ttk.Window):
         self.tab_frame = TabFrame(mm_lower)
         self.tab_frame.pack(expand=True, fill="both")
 
-        # aa = "Hello, this is a placeholder for the main content area. You can add your widgets here."
-        # for i in range(51):
-        #     self.tab_frame.txt_area.insert(tk.END, f"{aa}\n")
-        #     self.tab_frame.txt_area.see("end-1c")  # Scroll to the end
 
     #----------------------------------Right Frame GUI----------------------------------#
     def create_right_frame(self):
@@ -158,132 +155,8 @@ class MainApp(ttk.Window):
     def bottom_bar(self):
         bottom_bar = ttk.Frame(self)
         bottom_bar.grid(row=1, column=0, columnspan=2, sticky="ewns")
-
+        # Configure bottom bar layout
         bottom_bar = BottomBar(bottom_bar)
         bottom_bar.pack(side="bottom", fill="both")
 
 #----------------------------------End of MainApp Class GUI----------------------------------#
-
-    def select_folder(self):
-        self.masseage.show_toast("Warning", "Please Choose a Folder", bt="warning")  # Test toast notification
-        folder = choose_folder()
-        if folder:
-            self.upper_frm.show_text.delete(1.0, tk.END)  # Clear previous text
-            self.upper_frm.update_status(f"Selected Folder: {folder}")
-            self.masseage.show_toast("Folder Selected", f"You have selected: {folder}", bt="success")
-            # Reset old scan data
-            self.scanner.reset()
-            self.tab_frame.txt_area.delete(1.0, tk.END)
-
-            self.source = folder # Store the selected folder path
-            self.tab_frame.txt_area.insert(tk.END, f"📂 Selected folder: {folder}\n")
-            self.btn_scan.config(state="normal")
-        else:
-            messagebox.showwarning("Warning", "No folder selected.")
-
-        # self.view_btn.config(state="disabled")
-        self.sav_res.config(state="disabled")
-        self.sav_log.config(state="disabled")
-        self.sv_csv.config(state="disabled")
-        # self.files_csv.config(state="disabled")
-
-
-    def run_scanning(self):
-        if not hasattr(self, 'source') or not self.source:
-            messagebox.showwarning("Warning", "Please select a folder first.")
-            return
-        self.tab_frame.notebook.select(self.tab_frame.Scanning)
-        self.masseage.show_toast("Scanning", "Scanning started...", bt="info")
-        self.scanner.reset()
-        self.tab_frame.txt_area.delete(1.0, tk.END)
-        self.tab_frame.txt_area.insert(tk.END, "🔍 Scanning started...\n")
-        self.update_idletasks()
-
-        start_time = time.time()  # Start timer
-        num = 0
-        for root, dirs, files in os.walk(self.source):
-            for file_name in files:
-                scanning_path = Path(root) / file_name
-                num += 1
-                log = f"{num}. 📁 Scanning: {scanning_path}"
-                self.tab_frame.txt_area.insert(tk.END, log + "\n")
-                self.tab_frame.txt_area.see(tk.END)
-                self.update_idletasks()
-                self.tab_frame.txt_area.delete(1.0, tk.END)
-                # time.sleep(0.01)  # Simulate some delay for scanning
-        time_taken = time.time() - start_time
-        self.tab_frame.txt_area.insert(tk.END, f"✅ Scan completed in {time_taken:.2f} seconds.\n")
-        self.tab_frame.txt_area.insert(tk.END, "------------------Scan End------------------------\n")
-
-        self.fps = round((num / time_taken if time_taken > 0 else 0))
-        self.tab_frame.txt_area.insert(tk.END, f"📊 Scanned {self.fps}")
-
-        # Internal Scanning
-        self.scanner.scan(self.source, self.tab_frame.txt_area)
-
-        for ftype, data in self.scanner.get_file_stats().items():
-            self.tab_frame.txt_area.insert(tk.END, f"{ftype}: {data['count']} files, {data['size']} MB \n")
-        # self.tab_frame.txt_area.insert(tk.END, f"📊 File statistics: {self.scanner.get_file_stats()}\n")
-
-        # self.tab_frame.txt_area.insert(tk.END, f"✅ Scan completed. {num} files scanned.\n")
-        self.tab_frame.txt_area.insert(tk.END, "💾 You can now save the logs as CSV or PKL and Files Info in Text file.\n")
-        self.tab_frame.txt_area.see(tk.END)
-
-        self.upper_frm.update_status(f"Scanned {self.fps} files per second.")
-        # Enable buttons after scanning
-        self.btn_scan.config(state="disabled")
-        self.view_btn.config(state="disabled")
-        self.sav_res.config(state="normal")
-        self.sav_log.config(state="normal")
-        self.sv_csv.config(state="normal")
-        self.files_csv.config(state="disabled")
-
-    
-    def run_save_csv(self):
-        self.tab_frame.txt_area.insert(tk.END, "💾 Saving logs as CSV...\n")
-        # Example logic for saving CSV
-        self.log_saving.csv_logs_save(self.scanner.get_file_paths())
-        self.tab_frame.txt_area.insert(tk.END, "✅ CSV logs saved successfully.\n")
-        self.sv_csv.config(state="disabled")
-        self.files_csv.config(state="normal")
-        
-    def save_pkl_logs(self):
-        self.tab_frame.txt_area.insert(tk.END, "💾 Saving logs as PKL...\n")
-        # Example logic for saving PKL
-        self.log_saving.pkl_logs_save(self.scanner.get_logs())
-        self.tab_frame.txt_area.insert(tk.END, "✅ PKL logs saved successfully.\n")
-        self.sav_log.config(state="disabled")
-
-    def save_file_infotxt(self):
-        self.tab_frame.txt_area.insert(tk.END, "💾 Saving file info...\n")
-        # Example logic for saving file info in Text File
-        self.log_saving.save_file_info(self.scanner.get_file_stats().items())
-        self.tab_frame.txt_area.insert(tk.END, "✅ File info saved successfully in Text file.\n")
-        self.sav_res.config(state="disabled")
-        self.view_btn.config(state="normal")
-
-    def goto_tab2(self):
-        """Switch to the Results tab."""
-        self.tab_frame.results_text.delete(1.0, tk.END)
-        # for ftype, data in self.scanner.get_file_stats().items():
-        #     self.tab_frame.results_text.insert(tk.END, f"{ftype}: {data['count']} files, {data['size']} MB \n")
-        self.tab_frame.notebook.select(self.tab_frame.Results)
-        if os.path.exists(self.log_saving.text_info_path):
-            with open(self.log_saving.text_info_path, 'r', encoding='utf-8') as f:
-                self.tab_frame.results_text.insert(tk.END, f.read() + "\n")
-        else:
-            self.tab_frame.results_text.insert(tk.END, "No file info available.\n")
-
-
-    def goto_tab3(self):
-        """Switch to the File Info tab."""
-        self.tab_frame.notebook.select(self.tab_frame.view_info)
-        self.tab_frame.tree.delete(*self.tab_frame.tree.get_children())
-        if os.path.exists(self.log_saving.csv_data_path):
-            with open(self.log_saving.csv_data_path, 'r', encoding='utf-8') as f:
-                reader = csv.reader(f)
-                next(reader)
-                for row in reader:
-                    self.tab_frame.tree.insert("", "end", values=row)
-        else:
-            self.tab_frame.tree.insert("", "end", values=("No data available", "", "", ""))

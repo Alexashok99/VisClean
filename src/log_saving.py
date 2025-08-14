@@ -1,5 +1,6 @@
 
-# from src.scanner import Scanner
+
+# src/log_saving.py
 import pickle
 import csv
 import os

@@ -3,8 +3,9 @@ import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.tooltip import ToolTip
 from tkinter import scrolledtext
+from ttkbootstrap.constants import *
 
-from setting.settings import FONT_SIZE
+# from setting.settings import FONT_SIZE
 
 class UpperFrame(ttk.Frame):
     def __init__(self, parent):
@@ -12,29 +13,21 @@ class UpperFrame(ttk.Frame):
         self.grid_columnconfigure(0, weight=9, minsize=400)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
-        self.grid_rowconfigure(0, weight=0, minsize=50)
+        self.grid_rowconfigure(0, weight=1, minsize=50)
 
     def create_widgets(self):
-        # self.show_text = ttk.Label(
-        #     self,
-        #     text="Welcome to the File Scanner App!",
-        #     font= FONT_SIZE["Log"],
-        #     bootstyle="inverse-primary",
-        #     anchor="center", justify="center"
-        # )
-        # self.show_text.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
-
+        # Create a label for the title
         self.show_text = scrolledtext.ScrolledText(
             self,
             wrap="word",
             bg="#BEEAD7",
             fg="#333333",
             font=("Consolas", 10),
-            height=2
+            height=3
         )
         self.show_text.grid(row=0, column=0, sticky="nsew")
 
-        self.search_entry = ttk.Entry(self, bootstyle="info")
+        self.search_entry = ttk.Entry(self, bootstyle= INFO)
         self.search_entry.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
 
         self.btn_widget = ttk.Button(

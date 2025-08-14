@@ -1,11 +1,10 @@
 
+# gui/tab_frame.py
 import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
-from tkinter import filedialog, messagebox, scrolledtext
-import csv
-import os
-import datetime
+from tkinter import scrolledtext
+
 
 class TabFrame(ttk.Frame):
     def __init__(self, parent):
@@ -58,25 +57,6 @@ class TabFrame(ttk.Frame):
         self.tree.column("Type", width=100, anchor="center")
         self.tree.column("Size", width=100, anchor="center")
         self.tree.column("Last Modified", width=150, anchor="center")
-
-        # Sample data
-        # data = [
-        #     ("report.pdf", "120", "PDF", "2023-10-01 10:00 AM"),
-        #     ("image.png", "450", "Image", "2023-10-02 11:30 AM"),
-        #     ("notes.txt", "12", "Text", "2023-10-03 09:15 AM"),
-        # ]
-        # for row in data:
-        #     self.tree.insert("", "end", values=row)
-        # # Load data from CSV file if it exists
-        # if os.path.exists("data/logs.csv"):
-        #     # self.load_csv_data()
-
-        #     with open("data/logs.csv", "r") as file:
-        #         reader = csv.reader(file)
-        #         for row in reader:
-        #             self.tree.insert("", "end", values=row)
-        # else:
-        #     self.tree.insert("", "end", values=("No data available", "", "", ""))
 
         # Add scrollbar
         scroll_y = ttk.Scrollbar(self.view_info, orient="vertical", command=self.tree.yview, bootstyle=ROUND)
